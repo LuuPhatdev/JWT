@@ -9,13 +9,13 @@ const middlewareController = {
       const accessToken = token.split(" ")[1];
       jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
         if (err) {
-          res.status(403).json("Token is not valid");
+        return res.status(403).json("Token is not valid");
         }
         res.user = user;
         next();
       });
     } else {
-      res.status(401).json("you are not authenticated");
+      return res.status(401).json("you are not authenticated");
     }
   },
 
@@ -25,7 +25,7 @@ const middlewareController = {
         console.log(req.user.id)
         next();
       } else {
-        res.status(403).json("You're not allowed to delete others");
+        return res.status(403).json("You're not allowed to delete others");
       }
     });
   },
