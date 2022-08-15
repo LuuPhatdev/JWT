@@ -28,6 +28,7 @@ const authSlice = createSlice({
       state.login.isFetching = false;
       state.login.error = true;
     },
+    
     registerStart: (state) => {
       state.register.isFetching = true;
     },

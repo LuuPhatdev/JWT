@@ -1,43 +1,46 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { deleteUser, getAllUsers } from "../../redux/apiRequest";
 import "./home.css";
 
 const HomePage = () => {
-  //DUMMY DATA
-  const userData = [
-    {
-      username: "anhduy1202",
-    },
-    {
-      username: "kelly1234",
-    },
-    {
-      username: "danny5678",
-    },
-    {
-      username: "kenny1122",
-    },
-    {
-      username: "jack1234",
-    },
-    {
-      username: "loi1202",
-    },
-    {
-      username: "nhinhi2009",
-    },
-    {
-      username: "kellynguyen1122",
-    },
-    
-  ];
+  const user = useSelector((state) => state.auth.login?.currentUser);
+  const userList = useSelector((state) => state.users.users?.allUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+
+    if (user?.accessToken) {
+      getAllUsers(user?.accessToken, dispatch);
+    }
+  }, []);
+
+  const handleDelete = (id) => {
+    deleteUser(user?.accessToken, dispatch, id);
+  };
+  
   return (
     <main className="home-container">
       <div className="home-title">User List</div>
+      <div className="home-role">{`Your role: ${
+        user?.admin ? `Admin` : `User`
+      }`}</div>
       <div className="home-userlist">
-        {userData.map((user) => {
+        {userList?.map((user) => {
           return (
             <div className="user-container">
               <div className="home-user">{user.username}</div>
-              <div className="delete-user"> Delete </div>
+              <div
+                className="delete-user"
+                onClick={() => handleDelete(user._id)}
+              >
+                Delete
+              </div>
             </div>
           );
         })}
