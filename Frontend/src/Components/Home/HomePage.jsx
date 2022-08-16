@@ -1,14 +1,22 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { createAxios } from "../../createInstance";
 import { deleteUser, getAllUsers } from "../../redux/apiRequest";
+import { loginSuccess } from "../../redux/authSlice";
 import "./home.css";
 
 const HomePage = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
   const userList = useSelector((state) => state.users.users?.allUser);
+  const msg = useSelector((state) => state.users?.msg);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
+
+  const handleDelete = (id) => {
+    deleteUser(user?.accessToken, dispatch, id, axiosJWT);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -16,14 +24,10 @@ const HomePage = () => {
     }
 
     if (user?.accessToken) {
-      getAllUsers(user?.accessToken, dispatch);
+      getAllUsers(user?.accessToken, dispatch, axiosJWT);
     }
   }, []);
 
-  const handleDelete = (id) => {
-    deleteUser(user?.accessToken, dispatch, id);
-  };
-  
   return (
     <main className="home-container">
       <div className="home-title">User List</div>
@@ -45,6 +49,7 @@ const HomePage = () => {
           );
         })}
       </div>
+      <div className="errorMgs">{msg}</div>
     </main>
   );
 };

@@ -3,6 +3,9 @@ import {
   loginFailed,
   loginStart,
   loginSuccess,
+  logOutFailed,
+  logOutStart,
+  logOutSuccess,
   registerFailed,
   registerStart,
   registerSuccess,
@@ -38,10 +41,10 @@ export const registerUser = async (user, dispatch, navigate) => {
   }
 };
 
-export const getAllUsers = async (accessToken, dispatch) => {
+export const getAllUsers = async (accessToken, dispatch, axiosJWT) => {
   dispatch(getUsersStart());
   try {
-    const res = await axios.get("v1/user", {
+    const res = await axiosJWT.get("v1/user", {
       headers: { token: `Bearer ${accessToken}` },
     });
     dispatch(getUsersSuccess(res.data));
@@ -59,5 +62,18 @@ export const deleteUser = async (accessToken, dispatch, id) => {
     dispatch(deleteUserSuccess(res.data));
   } catch (err) {
     dispatch(deleteUserFailed(err.response.data));
+  }
+};
+
+export const logOut = async (dispatch, id, navigate, accessToken, axiosJWT) => {
+  dispatch(logOutStart());
+  try {
+   await axiosJWT.post("v1/auth/logout", id, {
+      headers: { token: `Bearer ${accessToken}` },
+    });
+    dispatch(logOutSuccess());
+    navigate("/login")
+  } catch (err) {
+    dispatch(logOutFailed());
   }
 };

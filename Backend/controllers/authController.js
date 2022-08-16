@@ -115,12 +115,11 @@ const authController = {
     });
   },
 
-  userLogout: async (req, res) => {
+  logOut: async (req, res) => {
+    //Clear cookies when user logs out
+    refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
     res.clearCookie("refreshToken");
-    refreshTokens = refreshTokens.filter(
-      (token) => token !== req.cookies.refreshToken
-    );
-    res.status(200).json("Log out!");
+    res.status(200).json("Logged out successfully!");
   },
 };
 
